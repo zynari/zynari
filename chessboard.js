@@ -1,31 +1,36 @@
-// chessboard.js (Minimal Visual)
-function Chessboard(containerId, config) {
-  const boardEl = document.getElementById(containerId);
-  const files = ['a','b','c','d','e','f','g','h'];
-  const ranks = ['8','7','6','5','4','3','2','1'];
-  let position = config.position || 'start';
+// chessboard.js - Simple chessboard renderer using Unicode
 
-  function createBoard() {
-    boardEl.innerHTML = '';
-    for (let r = 0; r < 8; r++) {
-      for (let f = 0; f < 8; f++) {
-        const square = document.createElement('div');
-        square.className = 'square ' + ((r + f) % 2 === 0 ? 'light' : 'dark');
-        square.style.width = '50px';
-        square.style.height = '50px';
-        square.style.display = 'inline-block';
-        square.style.boxSizing = 'border-box';
-        boardEl.appendChild(square);
-      }
-      boardEl.appendChild(document.createElement('br'));
+function Chessboard(id, config) {
+  const container = document.getElementById(id);
+  container.innerHTML = '';
+  const size = 8;
+  const light = '#f0d9b5';
+  const dark = '#b58863';
+
+  const squares = [];
+
+  for (let r = 0; r < size; r++) {
+    for (let f = 0; f < size; f++) {
+      const square = document.createElement('div');
+      square.className = 'square';
+      square.style.width = '50px';
+      square.style.height = '50px';
+      square.style.display = 'inline-block';
+      square.style.verticalAlign = 'top';
+      square.style.background = (r + f) % 2 === 0 ? light : dark;
+      square.dataset.square = String.fromCharCode(97 + f) + (8 - r);
+      container.appendChild(square);
+      squares.push(square);
     }
+    const br = document.createElement('br');
+    container.appendChild(br);
   }
 
-  createBoard();
+  function position() {
+    // Not implemented – placeholder for future board updates
+  }
 
   return {
-    position: function(fen) {
-      // ignore for demo, visual only
-    }
+    position
   };
 }
