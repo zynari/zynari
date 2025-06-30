@@ -1,0 +1,1 @@
+// Chessboard.js placeholder

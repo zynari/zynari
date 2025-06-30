@@ -1,62 +1,105 @@
 
-<!-- Zynari Website by Arav Halder -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zynari - By Arav Halder</title>
+  <title>Zynari - Play Chess</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="chess.js"></script>
+  <script src="chessboard.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #0b0c10; color: #c5c6c7; }
-    header { background: #1f2833; padding: 20px; text-align: center; }
-    header h1 { color: #66fcf1; margin: 0; }
-    nav { background: #45a29e; display: flex; justify-content: center; }
-    nav a { color: white; padding: 15px 20px; text-decoration: none; }
-    nav a:hover { background: #66fcf1; color: #0b0c10; }
-    section { padding: 40px; }
-    h2 { color: #66fcf1; }
-    footer { text-align: center; padding: 20px; background: #1f2833; color: #c5c6c7; }
-    .chess-container { background: #c5c6c7; padding: 10px; border-radius: 8px; overflow-x: auto; }
-    iframe { width: 100%; height: 520px; border: none; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b0c10;
+      color: #c5c6c7;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #1f2833;
+      text-align: center;
+      padding: 20px;
+    }
+    header h1 {
+      color: #66fcf1;
+    }
+    #board {
+      width: 400px;
+      margin: 20px auto;
+    }
+    .clock {
+      text-align: center;
+      font-size: 20px;
+      margin-top: 10px;
+    }
+    .clock span {
+      display: inline-block;
+      width: 100px;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #1f2833;
+      color: #c5c6c7;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Zynari</h1>
-    <p>Created by Arav Halder | Language, Games, & Creativity</p>
+    <h1>Zynari Chess</h1>
+    <p>Play chess locally with a 15-minute timer per player.</p>
   </header>
-  <nav>
-    <a href="#about">About</a>
-    <a href="#games">Games</a>
-    <a href="#language">Zynari Language</a>
-    <a href="#contact">Contact</a>
-  </nav>
-  <section id="about">
-    <h2>About Me</h2>
-    <p>Hey, I'm Arav Halder — creator of the Zynari language and creative projects like Interstellar 2 and original game ideas.</p>
-  </section>
-  <section id="games">
-    <h2>Games</h2>
-    <p>Play chess with a friend — locally on the same device or online with a 15-minute timer.</p>
-    <div class="chess-container">
-      <iframe src="https://www.chess.com/embed/play/online"></iframe>
-    </div>
-  </section>
-  <section id="language">
-    <h2>Zynari Language</h2>
-    <p>Zynari is a fully constructed original spoken language created for storytelling, worldbuilding, and fun.</p>
-    <ul>
-      <li>Original Grammar & Phonetics</li>
-      <li>Unique Vocabulary</li>
-      <li><a href="Zynari_Dictionary_Preview_1000Words.pdf" download>Download the 1000-word Zynari Dictionary (PDF)</a></li>
-    </ul>
-  </section>
-  <section id="contact">
-    <h2>Contact</h2>
-    <p>You can reach out to me via social media or email (to be added).</p>
-  </section>
+
+  <div id="board"></div>
+  <div class="clock">
+    <span id="white-timer">15:00</span> ⏱️ <span id="black-timer">15:00</span>
+  </div>
+
   <footer>
     <p>&copy; 2025 Arav Halder. All rights reserved.</p>
   </footer>
+
+  <script>
+    const board = Chessboard('board', {
+      draggable: true,
+      position: 'start',
+      onDrop: onDrop
+    });
+    const game = new Chess();
+
+    let whiteTime = 15 * 60;
+    let blackTime = 15 * 60;
+    let currentTurn = 'w';
+
+    const whiteTimerEl = document.getElementById('white-timer');
+    const blackTimerEl = document.getElementById('black-timer');
+
+    function updateClocks() {
+      whiteTimerEl.textContent = formatTime(whiteTime);
+      blackTimerEl.textContent = formatTime(blackTime);
+    }
+
+    function formatTime(seconds) {
+      const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const s = String(seconds % 60).padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function onDrop(source, target) {
+      const move = game.move({ from: source, to: target, promotion: 'q' });
+      if (move === null) return 'snapback';
+      board.position(game.fen());
+      currentTurn = game.turn();
+    }
+
+    setInterval(() => {
+      if (game.game_over()) return;
+      if (currentTurn === 'w') whiteTime--;
+      else blackTime--;
+      updateClocks();
+    }, 1000);
+
+    updateClocks();
+  </script>
 </body>
 </html>
